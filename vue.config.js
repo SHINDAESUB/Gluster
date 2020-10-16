@@ -1,7 +1,9 @@
+
 module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
+
 
   devServer: {
     proxy: {
@@ -11,4 +13,7 @@ module.exports = {
     }
   },
 
+  //npm run build 하면 지정된 경로로 생성한다.
+  outputDir: '../back-end/public' ,
+  
 }

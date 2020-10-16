@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import storageService from "@/services/storage.js"
+
 export default {
     props: {
         icons: Object,
@@ -72,50 +74,46 @@ export default {
             open: [],
             active: [],
             items: [],
-            filter: ""
+            filter: "",
+            defaultItems: [
+                {
+                    type: "dir",
+                    path: "/",
+                    basename: "root",
+                    extension: "",
+                    name: "root",
+                    children: []
+                }
+            ]
         };
     },
     methods: {
         init() {
             this.open = [];
             this.items = [];
-            // set default files tree items (root item) in nextTick. 
-            // Otherwise this.open isn't cleared properly (due to syncing perhaps)
+
             // nextTick 으로 처리 하고, data 에 defaultItems  만들어서 초기화 시켜준다. 
-            setTimeout(() => {
-                this.items = [
-                    {
-                        type: "dir",
-                        path: "/",
-                        basename: "root",
-                        extension: "",
-                        name: "root",
-                        children: []
-                    }
-                ];
-            }, 0);
+            this.$nextTick(() => { 
+                    this.items = this.defaultItems
+                }
+            )
             if (this.path !== "") {
                 this.$emit("path-changed", "");
             }
         },
         // 파일 읽어오기
         async readFolder(item) {
+            console.log( "this.storage 은 ? :", this.storage )
+            console.log( "item.path 은 ? :", item.path )
+
             this.$emit("loading", true);
-            let url = this.endpoints.list.url
-                .replace(new RegExp("{storage}", "g"), this.storage)
-                .replace(new RegExp("{path}", "g"), item.path);
+            
+            let data = {
+                storage : this.storage,
+                path    : item.path,
+            }
 
-
-
-            let config = {
-                url,
-                method: this.endpoints.list.method || "get"
-            };
-
-            console.log("readFolder config :", config)
-            console.log("readFolder url :", url)
-
-            let response = await this.axios.request(config);
+            let response = await storageService.list(data) 
 
             // eslint-disable-next-line require-atomic-updates
             item.children = response.data.map(item => {

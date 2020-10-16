@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import List from '../views/List.vue'
+// import Home from '../views/Home.vue'
+import File from '../views/File.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
+  // {
+  //   path: '/',
+  //   name: 'Home',
+  //   component: Home
+  // },
   // {
   //   path: '/about',
   //   name: 'About',
@@ -20,9 +20,9 @@ const routes = [
   //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   // }
   {
-    path: '/list',
-    name: 'list',
-    component: List
+    path: '/file',
+    name: 'file',
+    component: File
   },
 ]
 

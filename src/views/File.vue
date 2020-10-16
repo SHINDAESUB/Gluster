@@ -23,11 +23,11 @@
                     v-on:path-changed="pathChanged"
                     v-on:loading="loadingChanged"
                     v-on:refreshed="refreshPending = false"
-                ></Tree>
+                />
             </v-col>
             <v-divider v-if="tree" vertical></v-divider>
-            <!-- <v-col>
-                <list
+            <v-col>
+                <List
                     :path="path"
                     :storage="activeStorage"
                     :icons="icons"
@@ -38,8 +38,8 @@
                     v-on:loading="loadingChanged"
                     v-on:refreshed="refreshPending = false"
                     v-on:file-deleted="refreshPending = true"
-                ></list>
-            </v-col> -->
+                />
+            </v-col>
         </v-row>
     </v-card>
 </template>
@@ -49,8 +49,11 @@ import axios from "axios";
 
 import Toolbar from "./fileBrowser/Toolbar"
 import Tree    from "./fileBrowser/Tree"
-import endPointService from "../services/endPoint"
+import List    from "./fileBrowser/List"
 
+// import endPointService from "../services/endPoint"
+
+// Stroages 목록
 const availableStorages = [
     {
         name: "Local",
@@ -63,6 +66,7 @@ const availableStorages = [
         icon: "mdi-dropbox"
     }*/
 ];
+
 // File 확장자에 따른 아이콘 표시
 const fileIcons = {
     zip: "mdi-folder-zip-outline",
@@ -88,8 +92,8 @@ const fileIcons = {
 
 // request  -> service 바꾼다.
 const endpoints = {
-    // list: { url: "/storage/{storage}/list?path={path}", method: "get" },
-    list: endPointService.list('\\test'), 
+    list: { url: "/storage/{storage}/list?path={path}", method: "get" },
+    // list: endPointService.list('\\test'), 
     upload: { url: "/storage/{storage}/upload?path={path}", method: "post" },
     mkdir: { url: "/storage/{storage}/mkdir?path={path}", method: "post" },
     delete: { url: "/storage/{storage}/delete?path={path}", method: "post" }
@@ -99,7 +103,7 @@ export default {
     components: {
         Toolbar,
         Tree,
-        // List,
+        List,
         // Upload
     },
     data() {
