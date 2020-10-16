@@ -12,7 +12,7 @@ export default {
 
     async upload (data){
         try{
-            const result = await axios.post(`/storage/${data.storage}/upload?path=${data.path}`)
+            const result = await axios.post(`/storage/${data.storage}/upload?path=${data.path}`,data.data)
             return result
         }catch(error){
             return error.message
@@ -21,7 +21,7 @@ export default {
 
     async mkdir (data){
         try{
-            const result = await axios.post(`/storage/${data.storage}/mkdir?path=${data.path}`)
+            const result = await axios.post(`/storage/${data.storage}/mkdir?path=${data.path}`,data)
             return result
         }catch(error){
             return error.message
@@ -30,7 +30,8 @@ export default {
 
     async delete (data){
         try{
-            const result = await axios.post(`/storage/${data.storage}/delete?path=${data.path}`)
+            console.log("data :" , data)
+            const result = await axios.post(`/storage/${data.storage}/delete?path=${data.path}`,data)
             return result
         }catch(error){
             return error.message

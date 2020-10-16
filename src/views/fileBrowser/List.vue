@@ -161,24 +161,34 @@ export default {
         },
         async deleteItem(item) {
             let confirmed = await this.$refs.confirm.open(
-                "Delete",
-                `Are you sure<br>you want to delete this ${
+                "삭제",
+                `${
                     item.type === "dir" ? "folder" : "file"
-                }?<br><em>${item.basename}</em>`
+                }?<br><em>${item.basename}</em>
+                <br>
+                삭제하시겠습니까?
+                `
             );
 
             if (confirmed) {
                 this.$emit("loading", true);
-                let url = this.endpoints.delete.url
-                    .replace(new RegExp("{storage}", "g"), this.storage)
-                    .replace(new RegExp("{path}", "g"), item.path);
+                // let url = this.endpoints.delete.url
+                //     .replace(new RegExp("{storage}", "g"), this.storage)
+                //     .replace(new RegExp("{path}", "g"), item.path);
 
-                let config = {
-                    url,
-                    method: this.endpoints.delete.method || "post"
-                };
+                // let config = {
+                //     url,
+                //     method: this.endpoints.delete.method || "post"
+                // };
 
-                await this.axios.request(config);
+                let data = {
+                    storage:this.storage,
+                    path:item.path
+                }
+
+                await storageService.delete(data)
+
+                // await this.axios.request(config);
                 this.$emit("file-deleted");
                 this.$emit("loading", false);
             }

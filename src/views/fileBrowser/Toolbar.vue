@@ -1,6 +1,6 @@
 <template>
     <v-toolbar flat dense color="blue-grey lighten-5">
-        <v-toolbar-items>    
+        <v-toolbar-items>
             <v-menu offset-y v-if="storages.length > 1">
                 <template v-slot:activator="{ on }">
                     <v-btn icon class="storage-select-button mr-3" v-on="on">
@@ -20,7 +20,7 @@
                         <v-list-item-title>{{ item.name }}</v-list-item-title>
                     </v-list-item>
                 </v-list>
-            </v-menu>    
+            </v-menu>
             <v-btn text :input-value="path === '/'" @click="changePath('/')">
                 <v-icon class="mr-2">{{storageObject.icon}}</v-icon>
                 {{storageObject.name}}
@@ -34,8 +34,9 @@
                     @click="changePath(segment.path)"
                 >{{ segment.name }}</v-btn>
             </template>
-        </v-toolbar-items>   
+        </v-toolbar-items>
         <div class="flex-grow-1"></div>
+
         <template v-if="$vuetify.breakpoint.smAndUp">
             <v-tooltip bottom v-if="pathSegments.length > 0">
                 <template v-slot:activator="{ on }">
@@ -43,37 +44,45 @@
                         <v-icon>mdi-arrow-up-bold-outline</v-icon>
                     </v-btn>
                 </template>
-                <span v-if="pathSegments.length === 1">Up to "root"</span>
-                <span v-else>Up to "{{pathSegments[pathSegments.length - 2].name}}"</span>
+                <span v-if="pathSegments.length === 1">"root" 이동 </span>
+                <span v-else>"{{pathSegments[pathSegments.length - 2].name}}" 이동</span>
             </v-tooltip>
+
             <v-menu
+                v-if="path"
                 v-model="newFolderPopper"
                 :close-on-content-click="false"
                 :nudge-width="200"
                 offset-y
             >
                 <template v-slot:activator="{ on }">
-                    <v-btn v-if="path" icon v-on="on" title="Create Folder">
+                    <v-btn icon v-on="on" title="Create Folder">
                         <v-icon>mdi-folder-plus-outline</v-icon>
                     </v-btn>
                 </template>
+
                 <v-card>
                     <v-card-text>
                         <v-text-field label="Name" v-model="newFolderName" hide-details></v-text-field>
                     </v-card-text>
                     <v-card-actions>
                         <div class="flex-grow-1"></div>
-                        <v-btn @click="newFolderPopper = false" depressed>Cancel</v-btn>
+                        <v-btn @click="newFolderPopper = false" depressed>
+                            취소
+                        </v-btn>
                         <v-btn
                             color="success"
                             :disabled="!newFolderName"
                             depressed
                             @click="mkdir"
-                        >Create Folder</v-btn>
+                        >
+                            폴더 생성
+                        </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-menu>
-            <v-btn v-if="path" icon @click="$refs.inputUpload.click()" title="Upload Files">
+
+            <v-btn v-if="path" icon @click="$refs.inputUpload.click()" title="파일 업로드">
                 <v-icon>mdi-plus-circle</v-icon>
                 <input v-show="false" ref="inputUpload" type="file" multiple @change="addFiles" />
             </v-btn>
@@ -83,6 +92,8 @@
 
 
 <script>
+import storageService from "@/services/storage.js"
+
 export default {
     props: {
         storages: Array,
@@ -142,16 +153,13 @@ export default {
         },
         async mkdir() {
             this.$emit("loading", true);
-            let url = this.endpoints.mkdir.url
-                .replace(new RegExp("{storage}", "g"), this.storage)
-                .replace(new RegExp("{path}", "g"), this.path + this.newFolderName);
-
-            let config = {
-                url,
-                method: this.endpoints.mkdir.method || "post"
-            };
-
-            await this.axios.request(config);
+            let data = {
+                storage: this.storage,
+                path:this.path,
+                newFolderPath: this.path + this.newFolderName
+            }
+            await storageService.mkdir(data)
+            
             this.$emit("folder-created", this.newFolderName);
             this.newFolderPopper = false;
             this.newFolderName = "";
